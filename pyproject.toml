@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "fiap-9soat-challenge-1"
+version = "0.1.0"
+description = ""
+authors = ["Lucas Maion <lucasmgois@outlook.com>"]
+license = "MIT"
+readme = "README.md"
+# packages = [{include = "adapters", from = "src"},{include="core", from="src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["standard"], version = "^0.115.2"}
+peewee = "^3.17.6"
+pydantic = "^2.9.2"
+loguru = "^0.7.2"
+psycopg2 = "^2.9.10"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+load-dotenv = "^0.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
