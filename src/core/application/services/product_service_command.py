@@ -1,10 +1,6 @@
 from src.core.application.interfaces.product_command import IProductCommand
-from src.core.application.ports.category_query import CategoryQuery
-from src.core.application.ports.currency_query import CurrencyQuery
-from src.core.application.ports.product_query import ProductQuery
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
 from src.core.domain.entities.produto_entity import PartialProdutoEntity, ProdutoEntity
-from src.core.domain.repositories.produto_repository import ProdutoRepository
 from src.core.helpers.options.produto_find_options import ProdutoFindOptions
 
 
