@@ -1,19 +1,23 @@
 from decimal import Decimal
 from typing import List, Optional
 from src.core.domain.base.entity import Entity, PartialEntity
+from src.core.domain.entities.cliente_entity import ClienteEntity
+from src.core.domain.entities.produto_escolhido_entity import ProdutoEscolhidoEntity
+from src.core.domain.value_objects.preco_value_object import PrecoValueObject
+from src.core.helpers.enums.compra_status import CompraStatus
 
 
 class CompraEntity(Entity):
-    client_id: int
-    status: str
-    products_id: List[int]
-    total: Decimal
+    cliente: ClienteEntity
+    status: CompraStatus
+    selected_products: List[ProdutoEscolhidoEntity]
+    total: PrecoValueObject
     finalized: bool
     canceled: bool
 
 
 class PartialCompraEntity(PartialEntity, CompraEntity):
-    client_id: Optional[int] = None
-    status: Optional[str] = None
-    products_id: Optional[List[int]] = None
-    total: Optional[Decimal] = None
+    client: Optional[ClienteEntity] = None
+    status: Optional[CompraStatus] = None
+    selected_product: Optional[List[ProdutoEscolhidoEntity]] = None
+    total: Optional[PrecoValueObject] = None

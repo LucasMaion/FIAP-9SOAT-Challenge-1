@@ -6,7 +6,7 @@ from src.core.domain.entities.categoria_entity import (
 )
 
 
-class CategoryQuery(ABC):
+class CategoriaQuery(ABC):
     @abstractmethod
     def get(self, item_id: int) -> CategoriaEntity:
         raise NotImplementedError()

@@ -5,7 +5,7 @@ from src.core.domain.entities.produto_entity import ProdutoEntity
 from src.core.helpers.options.produto_find_options import ProdutoFindOptions
 
 
-class ProductQuery(ABC):
+class ProdutoQuery(ABC):
     @abstractmethod
     def get_only_entity(self, item_id: int) -> ProdutoEntity:
         raise NotImplementedError()

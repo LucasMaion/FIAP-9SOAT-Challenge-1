@@ -1,18 +1,18 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from src.core.application.ports.product_query import ProductQuery
-from src.core.application.ports.category_query import CategoryQuery
+from src.core.application.ports.produto_query import ProdutoQuery
+from src.core.application.ports.categoria_query import CategoriaQuery
 from src.core.application.ports.currency_query import CurrencyQuery
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
 from src.core.helpers.options.produto_find_options import ProdutoFindOptions
 
 
-class IProductQuery(ABC):
+class IProdutoQuery(ABC):
     def __init__(
         self,
-        product_query: ProductQuery,
-        category_query: CategoryQuery,
+        product_query: ProdutoQuery,
+        category_query: CategoriaQuery,
         currency_query: CurrencyQuery,
     ):
         self.product_query = product_query

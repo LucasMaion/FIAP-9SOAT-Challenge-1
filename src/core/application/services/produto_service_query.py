@@ -1,15 +1,16 @@
 from typing import List, Optional
-from src.core.application.interfaces.product_query import IProductQuery
+from src.core.application.interfaces.produto_query import IProdutoQuery
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
 from src.core.helpers.options.produto_find_options import ProdutoFindOptions
 
 
-class ProductServiceQuery(IProductQuery):
+class ProdutoServiceQuery(IProdutoQuery):
 
     def get(self, product_id: int) -> ProdutoAggregate:
         product = self.product_query.get(product_id)
         if not product:
             raise ValueError("Produto não encontrado")
+        return product
 
     def index(
         self, options: Optional[ProdutoFindOptions] = None

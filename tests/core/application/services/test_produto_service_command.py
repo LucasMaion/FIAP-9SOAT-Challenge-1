@@ -2,18 +2,21 @@ from copy import deepcopy
 from datetime import datetime
 from decimal import Decimal
 from unittest.mock import MagicMock
-from dotenv import load_dotenv
 import pytest
 
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
+from src.core.domain.entities.cliente_entity import PartialClienteEntity
 from src.core.domain.entities.compra_entity import CompraEntity
 from src.core.domain.entities.produto_entity import PartialProdutoEntity, ProdutoEntity
 from src.core.domain.entities.categoria_entity import CategoriaEntity
 from src.core.domain.entities.currency_entity import CurrencyEntity
+from src.core.domain.entities.produto_escolhido_entity import (
+    PartialProdutoEscolhidoEntity,
+)
 from src.core.domain.value_objects.preco_value_object import PrecoValueObject
 
-load_dotenv()
-from src.core.application.services.product_service_command import ProductServiceCommand
+from src.core.application.services.produto_service_command import ProductServiceCommand
+from src.core.helpers.enums.compra_status import CompraStatus
 
 
 class TestProductServiceCommand:
@@ -386,12 +389,22 @@ class TestProductServiceCommand:
             orders=[
                 CompraEntity(
                     id=1,
-                    client_id=1,
-                    status="status",
-                    products_id=[1, 2, 3],
+                    cliente=PartialClienteEntity(id=1),
+                    status=CompraStatus.CRIANDO,
+                    selected_products=[PartialProdutoEscolhidoEntity(id=1)],
                     created_at=datetime(2021, 1, 1),
                     updated_at=datetime(2021, 1, 1),
-                    total=Decimal(10.0),
+                    total=PrecoValueObject(
+                        value=Decimal(10),
+                        currency=CurrencyEntity(
+                            symbol="R$",
+                            name="Real",
+                            code="BRL",
+                            id=1,
+                            created_at=datetime(2021, 1, 1),
+                            updated_at=datetime(2021, 1, 1),
+                        ),
+                    ),
                     finalized=False,
                     canceled=False,
                 )

@@ -4,17 +4,22 @@ from typing import Any
 from src.core.domain.aggregates.pedido_aggregate import PedidoAggregate
 from src.core.domain.base.repository import Repository
 from src.core.domain.entities.compra_entity import CompraEntity, PartialCompraEntity
+from src.core.domain.entities.pagamento_entity import PartialPagamentoEntity
 from src.core.helpers.options.pedido_find_options import PedidoFindOptions
 
 
 class PedidoRepository(Repository, ABC):
 
     @abstractmethod
-    def create(self, produto: PartialCompraEntity) -> PedidoAggregate:
+    def create_compra(self, produto: PartialCompraEntity) -> PedidoAggregate:
         raise NotImplementedError()
 
     @abstractmethod
-    def update(self, produto: CompraEntity) -> PedidoAggregate:
+    def create_payment(self, payment: PartialPagamentoEntity) -> PedidoAggregate:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def update_compra(self, produto: CompraEntity) -> PedidoAggregate:
         raise NotImplementedError()
 
     @abstractmethod

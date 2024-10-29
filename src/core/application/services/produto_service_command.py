@@ -1,4 +1,4 @@
-from src.core.application.interfaces.product_command import IProductCommand
+from src.core.application.interfaces.produto_command import IProductCommand
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
 from src.core.domain.entities.produto_entity import PartialProdutoEntity, ProdutoEntity
 from src.core.helpers.options.produto_find_options import ProdutoFindOptions
