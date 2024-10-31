@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from src.core.application.ports.pedido_query import PedidoQuery
 from src.core.domain.aggregates.pedido_aggregate import PedidoAggregate
-from src.core.helpers.options.produto_find_options import ProdutoFindOptions
+from src.core.helpers.options.pedido_find_options import PedidoFindOptions
 
 
 class IPedidoQuery(ABC):
@@ -19,6 +19,6 @@ class IPedidoQuery(ABC):
 
     @abstractmethod
     def index(
-        self, options: Optional[ProdutoFindOptions] = None
+        self, options: Optional[PedidoFindOptions] = None
     ) -> List[PedidoAggregate]:
         raise NotImplementedError()

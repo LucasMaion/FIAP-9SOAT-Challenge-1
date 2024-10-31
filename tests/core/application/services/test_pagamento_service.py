@@ -145,9 +145,7 @@ class TestPagamentoService:
     ):
         return CompraEntity(
             id=1,
-            cliente=client_entity,
-            canceled=False,
-            finalized=False,
+            client=client_entity,
             selected_products=[selected_product_entity],
             status=CompraStatus.CRIANDO,
             total=PrecoValueObject(value=10, currency=currency),

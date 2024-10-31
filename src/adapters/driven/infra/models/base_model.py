@@ -1,5 +1,5 @@
 from datetime import datetime
-from peewee import Model, DateTimeField
+from peewee import Model, DateTimeField, AutoField
 from playhouse.signals import pre_save
 from src.adapters.driven.infra import db
 
@@ -7,6 +7,7 @@ from src.adapters.driven.infra import db
 class BaseModel(Model):
     """Base model class that all models will inherit from."""
 
+    id = AutoField()
     created_at = DateTimeField(default=datetime.now)
     updated_at = DateTimeField(default=datetime.now)
     deleted_at = DateTimeField(null=True)

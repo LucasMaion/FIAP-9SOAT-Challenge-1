@@ -17,19 +17,25 @@ class PersonaValueObject(ValueObject):
 
     @field_validator("document")
     def validate_cpf(cls, document):
-        cpf_pattern = re.compile(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$")
+        if not document:
+            return document
+        cpf_pattern = re.compile(r"^\d{11}$")
         if not cpf_pattern.match(document):
             raise ValueError("CPF Inválido.")
         return document
 
     @field_validator("email")
     def validate_email(cls, email):
+        if not email:
+            return email
         email_pattern = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
         if not email_pattern.match(email):
             raise ValueError("Email Inválido.")
 
     @field_validator("phone")
-    def validate_ehone(cls, phone):
-        phone_pattern = re.compile(r"^\+?[1-9]\d{1,14}$")
+    def validate_phone(cls, phone):
+        if not phone:
+            return phone
+        phone_pattern = re.compile(r"^\d{1,14}$")
         if not phone_pattern.match(phone):
             raise ValueError("Telefone Inválido.")

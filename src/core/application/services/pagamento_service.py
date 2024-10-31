@@ -32,3 +32,6 @@ class PagamentoService(IPagamentoService):
             )
             return self.purchase_repository.create_payment(payment)
         raise ValueError("Payment failed")
+
+    def list_payment_methods(self):
+        return self.meio_de_pagamento_query.get_all()

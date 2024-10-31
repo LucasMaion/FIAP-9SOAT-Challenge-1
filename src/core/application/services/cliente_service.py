@@ -24,7 +24,13 @@ class ClienteCommand(IClienteService):
         return self.client_repository.create(client)
 
     def get_client_by_document(self, document: str) -> ClienteAggregate:
-        return self.client_query.find(ClientFindOptions(document=document))
+        result = self.client_query.find(ClientFindOptions(document=document))
+        if len(result) == 1:
+            return result[0]
+        return None
 
     def get_client_by_email(self, email: str) -> ClienteAggregate:
-        return self.client_query.find(ClientFindOptions(email=email))
+        result = self.client_query.find(ClientFindOptions(email=email))
+        if len(result) == 1:
+            return result[0]
+        return None

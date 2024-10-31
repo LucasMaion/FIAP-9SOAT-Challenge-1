@@ -1,4 +1,3 @@
-from decimal import Decimal
 from typing import List, Optional
 from src.core.domain.base.entity import Entity, PartialEntity
 from src.core.domain.entities.cliente_entity import ClienteEntity
@@ -8,12 +7,10 @@ from src.core.helpers.enums.compra_status import CompraStatus
 
 
 class CompraEntity(Entity):
-    cliente: ClienteEntity
+    client: ClienteEntity
     status: CompraStatus
     selected_products: List[ProdutoEscolhidoEntity]
     total: PrecoValueObject
-    finalized: bool
-    canceled: bool
 
 
 class PartialCompraEntity(PartialEntity, CompraEntity):

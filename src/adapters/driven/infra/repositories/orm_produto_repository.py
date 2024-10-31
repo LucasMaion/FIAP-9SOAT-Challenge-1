@@ -5,7 +5,7 @@ from src.adapters.data_mappers.produto_aggregate_data_mapper import (
 )
 from src.adapters.driven.infra.models.product_components import ProductComponent
 from src.adapters.driven.infra.models.products import Product
-from src.adapters.driven.infra.ports.orm_product_query import OrmProductQuery
+from src.adapters.driven.infra.ports.orm_produto_query import OrmProductQuery
 from src.adapters.driven.infra.repositories.orm_repository import OrmRepository
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
 from src.core.domain.entities.produto_entity import PartialProdutoEntity, ProdutoEntity
@@ -23,7 +23,7 @@ class OrmProdutoRepository(OrmRepository, ProdutoRepository):
 
     def update(self, produto: ProdutoEntity) -> ProdutoAggregate:
         db_item = ProdutoEntityDataMapper.from_domain_to_db(produto)
-        new_component_ids = db_item.pop("component_ids", [])
+        new_component = db_item.pop("components", [])
 
         update_query: Product = Product.update(**db_item).where(
             Product.id == db_item["id"]
@@ -34,8 +34,10 @@ class OrmProdutoRepository(OrmRepository, ProdutoRepository):
             ProductComponent.product == produto.id
         ).execute()
 
-        for component_id in new_component_ids:
-            ProductComponent.create(product=produto.id, component=component_id)
+        for component in new_component:
+            ProductComponent.create(
+                product=component["product"], component=component["component"]
+            )
         return ProdutoAggregateDataMapper.from_db_to_domain(
             Product.get(Product.id == db_item["id"])
         )

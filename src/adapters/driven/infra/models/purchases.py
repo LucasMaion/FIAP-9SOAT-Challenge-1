@@ -1,10 +1,14 @@
-from peewee import CharField, FloatField, BooleanField
+from peewee import FloatField, BooleanField, ForeignKeyField, IntegerField
 
 from src.adapters.driven.infra.models.base_model import BaseModel
+from src.adapters.driven.infra.models.currencies import Currency
+from src.adapters.driven.infra.models.payments import Payment
+from src.adapters.driven.infra.models.persona import Persona
 
 
 class Purchase(BaseModel):
-    status = CharField()
+    status = IntegerField()
     total_value = FloatField(default=0)
-    finalized = BooleanField(default=False)
-    canceled = BooleanField(default=False)
+    currency = ForeignKeyField(Currency, backref="purchase")
+    client = ForeignKeyField(Persona, backref="purchases")
+    payment = ForeignKeyField(Payment, backref="purchase", null=True, unique=True)

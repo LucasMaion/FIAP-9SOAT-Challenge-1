@@ -3,7 +3,7 @@ from datetime import datetime
 from unittest.mock import MagicMock
 
 import pytest
-from src.core.application.services.pedido_service_command import PedidoCommand
+from src.core.application.services.pedido_service_command import PedidoServiceCommand
 from src.core.domain.aggregates.pedido_aggregate import PedidoAggregate
 from src.core.domain.entities.categoria_entity import CategoriaEntity
 from src.core.domain.entities.cliente_entity import ClienteEntity
@@ -35,7 +35,7 @@ class TestPedidoService:
 
     @pytest.fixture
     def purchase_service(self, purchase_repository, purchase_query, produto_query):
-        return PedidoCommand(
+        return PedidoServiceCommand(
             purchase_repository=purchase_repository,
             purchase_query=purchase_query,
             produto_query=produto_query,
@@ -130,9 +130,7 @@ class TestPedidoService:
     ):
         return CompraEntity(
             id=1,
-            cliente=client_entity,
-            canceled=False,
-            finalized=False,
+            client=client_entity,
             selected_products=[selected_product_entity],
             status=CompraStatus.CRIANDO,
             total=PrecoValueObject(value=0, currency=currency),
@@ -173,7 +171,7 @@ class TestPedidoService:
         )
 
     def test_create_purchase_successfully(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase_service.purchase_query.get = MagicMock(return_value=None)
         purchase_service.purchase_repository.create_compra = MagicMock(
@@ -184,7 +182,7 @@ class TestPedidoService:
         purchase_service.purchase_repository.create_compra.assert_called_once()
 
     def test_add_product_to_existing_purchase_successfully(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase_service.purchase_query.get = MagicMock(return_value=pedido_aggregate)
         purchase_service.produto_query.get_only_entity = MagicMock(
@@ -198,7 +196,7 @@ class TestPedidoService:
         purchase_service.purchase_repository.update_compra.assert_called_once()
 
     def test_add_product_to_existing_purchase_fail_because_purchase_doesnt_exists(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase_service.purchase_query.get = MagicMock(return_value=None)
         purchase_service.produto_query.get_only_entity = MagicMock(
@@ -208,7 +206,7 @@ class TestPedidoService:
             purchase_service.add_new_product(1, 1)
 
     def test_add_product_to_existing_purchase_fail_because_product_doesnt_exists(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase_service.purchase_query.get = MagicMock(return_value=pedido_aggregate)
         purchase_service.produto_query.get_only_entity = MagicMock(return_value=None)
@@ -216,7 +214,7 @@ class TestPedidoService:
             purchase_service.add_new_product(1, 1)
 
     def test_add_component_to_product_in_purchase_successfully(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase_service.purchase_query.get = MagicMock(return_value=pedido_aggregate)
         purchase_service.produto_query.get_only_entity = MagicMock(
@@ -233,7 +231,7 @@ class TestPedidoService:
         purchase_service.purchase_repository.update_compra.assert_called_once()
 
     def test_add_component_to_product_in_purchase_fail_because_component_isnt_associated_to_product(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         component = deepcopy(pedido_aggregate.purchase.selected_products[0].product)
         component.id = 3
@@ -248,7 +246,7 @@ class TestPedidoService:
             purchase_service.add_component_to_select_product(1, 1, 3)
 
     def test_remove_product_from_purchase_successfully(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase_service.purchase_query.get = MagicMock(return_value=pedido_aggregate)
 
@@ -260,7 +258,7 @@ class TestPedidoService:
         purchase_service.purchase_repository.update_compra.assert_called_once()
 
     def test_remove_product_from_purchase_fail_because_product_isnt_associated_to_purchase(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase_service.purchase_query.get = MagicMock(return_value=pedido_aggregate)
         with pytest.raises(ValueError, match="Produto não está no pedido."):
@@ -268,7 +266,7 @@ class TestPedidoService:
 
     def test_concludes_a_purchase_successfully(
         self,
-        purchase_service: PedidoCommand,
+        purchase_service: PedidoServiceCommand,
         pedido_aggregate: PedidoAggregate,
         currency: CurrencyEntity,
     ):
@@ -283,7 +281,7 @@ class TestPedidoService:
         purchase_service.purchase_repository.update_compra.assert_called_once()
 
     def test_concludes_a_purchase_fail_because_purchase_doesnt_existis(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase_service.purchase_query.get = MagicMock(return_value=None)
         with pytest.raises(ValueError, match="Pedido não encontrado."):
@@ -291,7 +289,7 @@ class TestPedidoService:
 
     def test_concludes_a_purchase_fail_because_value_is_invalid_zero_or_negative(
         self,
-        purchase_service: PedidoCommand,
+        purchase_service: PedidoServiceCommand,
         pedido_aggregate: PedidoAggregate,
         currency: CurrencyEntity,
     ):
@@ -306,7 +304,7 @@ class TestPedidoService:
             purchase_service.concludes_pedido(1)
 
     def test_concludes_a_purchase_fail_because_there_are_no_products_associated(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase = deepcopy(pedido_aggregate)
         purchase.purchase.selected_products = []
@@ -315,7 +313,7 @@ class TestPedidoService:
             purchase_service.concludes_pedido(1)
 
     def test_concludes_a_purchase_fail_because_there_is_no_successful_payment_associated(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase = deepcopy(pedido_aggregate)
         purchase.payment = None
@@ -324,7 +322,7 @@ class TestPedidoService:
             purchase_service.concludes_pedido(1)
 
     def test_concludes_a_purchase_fail_because_purchase_is_already_concluded(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase = deepcopy(pedido_aggregate)
         purchase.payment.status = PagamentoStatus.PENDENTE
@@ -336,7 +334,7 @@ class TestPedidoService:
             purchase_service.concludes_pedido(1)
 
     def test_cancels_purchase_successfully(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         pedido = deepcopy(pedido_aggregate)
         pedido.purchase.status = CompraStatus.CRIANDO
@@ -344,14 +342,14 @@ class TestPedidoService:
         purchase_service.cancel_pedido(1)
 
     def test_cancels_purchase_fail_because_purchase_doesnt_existis(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase_service.purchase_query.get = MagicMock(return_value=None)
         with pytest.raises(ValueError, match="Pedido não encontrado."):
             purchase_service.cancel_pedido(1)
 
     def test_cancels_purchase_fail_because_purchase_is_already_finalized(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase = deepcopy(pedido_aggregate)
         purchase.purchase.status = CompraStatus.FINALIZADO
@@ -363,7 +361,7 @@ class TestPedidoService:
             purchase_service.cancel_pedido(1)
 
     def test_cancels_purchase_fail_because_purchase_is_already_canceled(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         purchase = deepcopy(pedido_aggregate)
         purchase.purchase.status = CompraStatus.CANCELADO
@@ -375,7 +373,7 @@ class TestPedidoService:
             purchase_service.cancel_pedido(1)
 
     def test_update_status_successfully(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         new_status = CompraStatus.ENTREGUE
         purchase = deepcopy(pedido_aggregate)
@@ -384,7 +382,7 @@ class TestPedidoService:
         purchase_service.update_status(1, new_status)
 
     def test_update_status_fail_because_new_status_break_state_machine_rules(
-        self, purchase_service: PedidoCommand, pedido_aggregate: PedidoAggregate
+        self, purchase_service: PedidoServiceCommand, pedido_aggregate: PedidoAggregate
     ):
         new_status = CompraStatus.CRIANDO
         purchase = deepcopy(pedido_aggregate)

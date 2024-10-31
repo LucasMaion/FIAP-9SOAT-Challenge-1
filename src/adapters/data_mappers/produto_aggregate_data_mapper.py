@@ -3,6 +3,7 @@ from src.adapters.data_mappers.produto_entity_data_mapper import ProdutoEntityDa
 from src.adapters.driven.infra.models.products import Product
 from src.adapters.driven.infra.models.purchases import Purchase
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
+from src.core.helpers.enums.compra_status import CompraStatus
 
 
 class ProdutoAggregateDataMapper:
@@ -14,7 +15,13 @@ class ProdutoAggregateDataMapper:
             orders=purchases if purchases else [],
             product=ProdutoEntityDataMapper.from_db_to_domain(produto),
             sold_amount=(
-                len([purchase for purchase in purchases if not purchase.canceled])
+                len(
+                    [
+                        purchase
+                        for purchase in purchases
+                        if not purchase.status == CompraStatus.CANCELADO
+                    ]
+                )
                 if purchases
                 else 0
             ),

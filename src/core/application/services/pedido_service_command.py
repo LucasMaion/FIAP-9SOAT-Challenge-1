@@ -8,7 +8,7 @@ from src.core.helpers.enums.compra_status import CompraStatus
 from src.core.helpers.enums.pagamento_status import PagamentoStatus
 
 
-class PedidoCommand(IPedidoCommand):
+class PedidoServiceCommand(IPedidoCommand):
     def create_pedido(self, pedido: PartialCompraEntity) -> PedidoAggregate:
         return self.purchase_repository.create_compra(pedido)
 
@@ -91,10 +91,12 @@ class PedidoCommand(IPedidoCommand):
         self, pedido_id: int, new_status: CompraStatus
     ) -> PedidoAggregate:
         pedido = self.purchase_query.get(pedido_id)
+        if not pedido:
+            raise ValueError("Pedido não encontrado.")
         return self._execute_update_status(pedido, new_status)
 
     def _execute_update_status(
-        self, pedido: CompraEntity, new_status: CompraStatus
+        self, pedido: PedidoAggregate, new_status: CompraStatus
     ) -> PedidoAggregate:
         if not self._pedido_state_machine(pedido.purchase.status, new_status):
             raise ValueError(
@@ -115,11 +117,22 @@ class PedidoCommand(IPedidoCommand):
     def _pedido_state_machine(current_status: CompraStatus, new_status: CompraStatus):
         match current_status:
             case CompraStatus.CRIANDO:
-                if new_status in (CompraStatus.CRIANDO,):
+                if new_status in (
+                    CompraStatus.CRIANDO,
+                    CompraStatus.EM_PREPARO,
+                    CompraStatus.PRONTO_PARA_ENTREGA,
+                    CompraStatus.ENTREGUE,
+                ):
                     return False
                 return True
             case CompraStatus.PAGO:
-                if new_status in (CompraStatus.CRIANDO, CompraStatus.PAGO):
+                if new_status in (
+                    CompraStatus.CRIANDO,
+                    CompraStatus.PAGO,
+                    CompraStatus.EM_PREPARO,
+                    CompraStatus.PRONTO_PARA_ENTREGA,
+                    CompraStatus.ENTREGUE,
+                ):
                     return False
                 return True
             case CompraStatus.CANCELADO:

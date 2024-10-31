@@ -1,4 +1,7 @@
+import argparse
 from dotenv import load_dotenv
+
+from src.adapters.driven.infra.seeder.seeder import seed_data
 
 load_dotenv()
 from src.adapters.driven.infra.migration.raw_creation import create_tables
@@ -9,7 +12,7 @@ def build_db():
 
 
 def seed_db():
-    pass
+    seed_data()
 
 
 def build():
@@ -18,4 +21,15 @@ def build():
 
 
 if __name__ == "__main__":
-    build()
+    parser = argparse.ArgumentParser(description="Database management script.")
+
+    parser.add_argument("-s", "--seed", action="store_true", help="Seed the database")
+    parser.add_argument("-b", "--build", action="store_true", help="Build the database")
+
+    args = parser.parse_args()
+
+    if args.build:
+        build_db()
+
+    if args.seed:
+        seed_db()

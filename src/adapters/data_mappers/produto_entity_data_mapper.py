@@ -51,7 +51,10 @@ class ProdutoEntityDataMapper:
             "price": produto.price.value if produto.price else None,
             "allow_components": produto.allow_components,
             "is_active": produto.is_active,
-            "category_id": produto.category.id if produto.category else None,
-            "currency_id": produto.price.currency.id if produto.price else None,
-            "component_ids": [comp.id for comp in produto.components],
+            "category": produto.category.id if produto.category else None,
+            "currency": produto.price.currency.id if produto.price else None,
+            "components": [
+                {"product": produto.id, "component": comp.id}
+                for comp in produto.components
+            ],
         }

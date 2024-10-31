@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 from src.adapters.driven.payment_providers.interfaces.payment_provider import (
     PaymentProvider,
@@ -26,4 +27,8 @@ class IPagamentoService(ABC):
     def process_purchase_payment(
         self, pedido_id: int, payment_method_id: int
     ) -> PedidoAggregate:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def list_payment_methods(self) -> List[MeioDePagamentoQuery]:
         raise NotImplementedError()

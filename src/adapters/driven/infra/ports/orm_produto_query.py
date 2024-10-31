@@ -8,13 +8,13 @@ from src.adapters.driven.infra.models.categories import Category
 from src.adapters.driven.infra.models.currencies import Currency
 from src.adapters.driven.infra.models.product_components import ProductComponent
 from src.adapters.driven.infra.models.products import Product
-from src.core.application.ports.product_query import ProductQuery
+from src.core.application.ports.produto_query import ProdutoQuery
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
 from src.core.domain.entities.produto_entity import ProdutoEntity
 from src.core.helpers.options.produto_find_options import ProdutoFindOptions
 
 
-class OrmProductQuery(ProductQuery):
+class OrmProductQuery(ProdutoQuery):
     def get_only_entity(self, item_id: int) -> Union[ProdutoEntity, None]:
         product: Product = (
             Product.select()

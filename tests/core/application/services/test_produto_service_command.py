@@ -389,7 +389,7 @@ class TestProductServiceCommand:
             orders=[
                 CompraEntity(
                     id=1,
-                    cliente=PartialClienteEntity(id=1),
+                    client=PartialClienteEntity(id=1),
                     status=CompraStatus.CRIANDO,
                     selected_products=[PartialProdutoEscolhidoEntity(id=1)],
                     created_at=datetime(2021, 1, 1),
@@ -405,8 +405,6 @@ class TestProductServiceCommand:
                             updated_at=datetime(2021, 1, 1),
                         ),
                     ),
-                    finalized=False,
-                    canceled=False,
                 )
             ],
         )

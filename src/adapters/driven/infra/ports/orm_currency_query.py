@@ -7,10 +7,11 @@ from src.core.domain.entities.currency_entity import (
 
 class OrmCurrencyQuery(CurrencyQuery):
     def get(self, item_id: int) -> CurrencyEntity:
-        return "YAY"
+        #
+        raise NotImplementedError()
 
     def get_all(self) -> list[CurrencyEntity]:
-        return "YAY"
+        raise NotImplementedError()
 
     def find(self, query_options: PartialCurrencyEntity) -> list[CurrencyEntity]:
-        return "YAY"
+        raise NotImplementedError()

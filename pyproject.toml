@@ -19,10 +19,11 @@ psycopg2 = "^2.9.10"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 load-dotenv = "^0.1.0"
+faker = "^30.8.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["."]
