@@ -5,7 +5,7 @@ description = ""
 authors = ["Lucas Maion <lucasmgois@outlook.com>"]
 license = "MIT"
 readme = "README.md"
-# packages = [{include = "adapters", from = "src"},{include="core", from="src"}]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -14,6 +14,7 @@ peewee = "^3.17.6"
 pydantic = "^2.9.2"
 loguru = "^0.7.2"
 psycopg2 = "^2.9.10"
+schedule = "^1.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
