@@ -15,6 +15,7 @@ from src.core.application.services.produto_service_query import (
 )
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
 from src.core.domain.entities.categoria_entity import (
+    CategoriaEntity,
     PartialCategoriaEntity,
 )
 from src.core.domain.entities.currency_entity import (
@@ -22,6 +23,7 @@ from src.core.domain.entities.currency_entity import (
 )
 from src.core.domain.entities.produto_entity import PartialProdutoEntity
 from src.core.domain.value_objects.preco_value_object import PrecoValueObject
+from src.core.helpers.functions.structure_value_range import structure_value_range
 from src.core.helpers.options.produto_find_options import ProdutoFindOptions
 
 router = APIRouter(
@@ -30,30 +32,35 @@ router = APIRouter(
 )
 
 
+@router.get("/categories")
+async def list_categories() -> Union[List[CategoriaEntity], None]:
+    try:
+        query = ProdutoServiceQuery(
+            OrmProductQuery(), OrmCategoriaQuery(), OrmCurrencyQuery()
+        )
+        return query.list_categories()
+    except (ValueError, AttributeError) as e:
+        logger.exception(e)
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.exception(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/index")
 async def list_itens(
     name: Optional[str] = None,
     category: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
-) -> List[ProdutoAggregate]:
+) -> Union[List[ProdutoAggregate], None]:
     try:
         query = ProdutoServiceQuery(
             OrmProductQuery(), OrmCategoriaQuery(), OrmCurrencyQuery()
         )
         query_options = None
         if any([name, category, min_price, max_price]):
-            price_range = None
-            if min_price or max_price:
-                if not min_price:
-                    min_price = 0
-                if not max_price:
-                    max_price = float("inf")
-                if min_price > max_price:
-                    raise ValueError(
-                        "min_price must be less than or equal to max_price"
-                    )
-                price_range = (min_price, max_price)
+            price_range = structure_value_range(min_price, max_price)
             query_options = ProdutoFindOptions(
                 name=name, category=category, price_range=price_range
             )

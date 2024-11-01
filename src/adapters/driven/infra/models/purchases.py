@@ -1,4 +1,4 @@
-from peewee import FloatField, BooleanField, ForeignKeyField, IntegerField
+from peewee import FloatField, ForeignKeyField, IntegerField
 
 from src.adapters.driven.infra.models.base_model import BaseModel
 from src.adapters.driven.infra.models.currencies import Currency

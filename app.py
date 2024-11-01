@@ -13,6 +13,7 @@ from fastapi import FastAPI
 from src.adapters.driven.infra.database.db import start_db
 from src.adapters.driver.API import (
     cliente_router,
+    payment_router,
     pedido_router,
     produto_router,
     queue_router,
@@ -58,4 +59,5 @@ def health_check():
 app.include_router(cliente_router.router)
 app.include_router(produto_router.router)
 app.include_router(pedido_router.router)
+app.include_router(payment_router.router)
 app.include_router(queue_router.router)

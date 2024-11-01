@@ -12,10 +12,18 @@ from src.core.application.services.pedido_service_query import PedidoServiceQuer
 from src.core.domain.aggregates.pedido_aggregate import PedidoAggregate
 from src.core.helpers.enums.compra_status import CompraStatus
 from src.core.helpers.options.pedido_find_options import PedidoFindOptions
+from src.core.helpers.services.in_memory_cache import InMemoryCacheService
 
 router = APIRouter(
     prefix="/queue",
     tags=["Fila de Pedidos"],
+)
+
+pedido_command = PedidoServiceCommand(
+    OrmPedidoRepository(InMemoryCacheService()),
+    OrmPedidoQuery(),
+    OrmProductQuery(),
+    InMemoryCacheService(),
 )
 
 
@@ -32,7 +40,7 @@ async def get_queue() -> Union[List[PedidoAggregate], None]:
             )
         )
 
-        return query.index(query_options)
+        return query.index(query_options) or []
     except (ValueError, AttributeError) as e:
         logger.exception(e)
         raise HTTPException(status_code=400, detail=str(e))
@@ -46,10 +54,7 @@ async def update_queue_item_status(
     pedido_id: int, new_status_number: int
 ) -> PedidoAggregate:
     try:
-        command = PedidoServiceCommand(
-            OrmPedidoRepository(), OrmPedidoQuery(), OrmProductQuery()
-        )
-        return command.update_status(
+        return pedido_command.update_status(
             pedido_id=pedido_id, new_status=CompraStatus(new_status_number)
         )
     except (ValueError, AttributeError) as e:

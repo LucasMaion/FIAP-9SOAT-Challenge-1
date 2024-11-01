@@ -50,7 +50,7 @@ class TestPagamentoService:
         meio_de_pagamento_query,
     ):
         return PagamentoService(
-            purchase_repository=purchase_repository,
+            pagamento_repository=purchase_repository,
             purchase_query=purchase_query,
             payment_provider=payment_provider,
             meio_de_pagamento_query=meio_de_pagamento_query,
@@ -81,7 +81,7 @@ class TestPagamentoService:
             orders=[],
             person=PersonaValueObject(
                 name="Test",
-                document="123.456.789-00",
+                document="12345678900",
                 email="email.test@teste.test",
                 address=AddressValueObject(
                     zip_code="12345678",
@@ -93,7 +93,7 @@ class TestPagamentoService:
                     additional_information="Test",
                 ),
                 birth_date=datetime(2021, 1, 1),
-                phone="+5511999999999",
+                phone="11999999999",
             ),
             created_at=datetime(2021, 1, 1),
             updated_at=datetime(2021, 1, 1),
@@ -158,6 +158,7 @@ class TestPagamentoService:
         return MeioDePagamentoEntity(
             id=1,
             name="mock_payment_method",
+            sys_name="mock_payment_method",
             description="This is a mock payment method",
             is_active=True,
             created_at=datetime(2021, 1, 1),
@@ -215,7 +216,7 @@ class TestPagamentoService:
             purchase=pedido.purchase,
             payment_value=pedido.purchase.total,
         )
-        pagamento_service.purchase_repository.create_payment = MagicMock(
+        pagamento_service.payment_repository.create = MagicMock(
             return_value=return_payment
         )
         result = pagamento_service.process_purchase_payment(1, 1)

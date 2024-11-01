@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Union
 
 from src.core.domain.entities.meio_de_pagamento_entity import (
     MeioDePagamentoEntity,
@@ -8,7 +9,7 @@ from src.core.domain.entities.meio_de_pagamento_entity import (
 
 class MeioDePagamentoQuery(ABC):
     @abstractmethod
-    def get(self, item_id: int) -> MeioDePagamentoEntity:
+    def get(self, item_id: int) -> Union[MeioDePagamentoEntity, None]:
         raise NotImplementedError()
 
     @abstractmethod

@@ -5,6 +5,7 @@ from src.core.application.ports.produto_query import ProdutoQuery
 from src.core.application.ports.categoria_query import CategoriaQuery
 from src.core.application.ports.currency_query import CurrencyQuery
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
+from src.core.domain.entities.categoria_entity import CategoriaEntity
 from src.core.helpers.options.produto_find_options import ProdutoFindOptions
 
 
@@ -27,4 +28,8 @@ class IProdutoQuery(ABC):
     def index(
         self, options: Optional[ProdutoFindOptions] = None
     ) -> List[ProdutoAggregate]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def list_categories(self) -> List[CategoriaEntity]:
         raise NotImplementedError()

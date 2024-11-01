@@ -6,19 +6,21 @@ from src.core.domain.aggregates.pedido_aggregate import PedidoAggregate
 from src.core.domain.entities.compra_entity import PartialCompraEntity
 from src.core.domain.repositories.pedido_repository import PedidoRepository
 from src.core.helpers.enums.compra_status import CompraStatus
+from src.core.helpers.interfaces.chace_service import CacheService
 
 
 class IPedidoCommand(ABC):
-
     def __init__(
         self,
         purchase_repository: PedidoRepository,
         purchase_query: PedidoQuery,
         produto_query: ProdutoQuery,
+        cache_service=CacheService,
     ):
         self.purchase_repository = purchase_repository
         self.purchase_query = purchase_query
         self.produto_query = produto_query
+        self.cache_service = cache_service
 
     @abstractmethod
     def create_pedido(self, pedido: PartialCompraEntity) -> PedidoAggregate:

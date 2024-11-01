@@ -6,5 +6,4 @@ from src.core.helpers.enums.compra_status import CompraStatus
 
 class PedidoFindOptions(RepositoryOptions):
     status: Optional[List[CompraStatus]] = None
-    category: Optional[str] = None
     total_value_range: Optional[Tuple[Optional[float], Optional[float]]] = None

@@ -30,15 +30,49 @@ class OrmPedidoQuery(PedidoQuery):
         return None
 
     def get_all(self) -> list[PedidoAggregate]:
-        raise NotImplementedError()
+        result: Purchase = (
+            Purchase.select()
+            .join(
+                Currency,
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .switch(Purchase)
+            .join(
+                Persona,
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .switch(Purchase)
+            .join(
+                Payment,
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .switch(Purchase)
+            .join(
+                PurchaseSelectedProducts,
+                on=(PurchaseSelectedProducts.purchase == Purchase.id),
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .join(
+                SelectedProduct,
+                on=(SelectedProduct.product == PurchaseSelectedProducts.id),
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .join(
+                SelectedProductComponent,
+                on=(SelectedProductComponent.selected_product == SelectedProduct.id),
+                join_type=JOIN.LEFT_OUTER,
+            )
+        )
+        parsed_result = [
+            PedidoAggregateDataMapper.from_db_to_domain(res) for res in result
+        ]
+        return parsed_result
 
     def find(self, query_options: PedidoFindOptions) -> list[PedidoAggregate]:
         queries = []
         if query_options.status:
             status = [status.value for status in query_options.status]
             queries.append(Purchase.status << status)
-        if query_options.category:
-            queries.append(Category.name.contains(query_options.category))
         if query_options.total_value_range:
             queries.append(
                 Purchase.total_value.between(*query_options.total_value_range)

@@ -10,11 +10,9 @@ class PagamentoEntity(Entity):
     payment_method: MeioDePagamentoEntity
     payment_value: PrecoValueObject
     status: PagamentoStatus
-    purchase: CompraEntity
 
 
 class PartialPagamentoEntity(PartialEntity, PagamentoEntity):
     payment_method: Optional[MeioDePagamentoEntity] = None
     payment_value: Optional[PrecoValueObject] = None
     status: Optional[PagamentoStatus] = None
-    purchase: Optional[CompraEntity] = None

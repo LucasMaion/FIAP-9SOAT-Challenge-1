@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import Optional
 from src.adapters.data_mappers.currency_entity_data_mapper import (
     CurrencyEntityDataMapper,
 )
@@ -6,6 +7,7 @@ from src.adapters.data_mappers.meio_de_pagamento_data_mapper import (
     MeioDePagamentoEntityDataMapper,
 )
 from src.adapters.driven.infra.models.payments import Payment
+from src.core.domain.entities.compra_entity import PartialCompraEntity
 from src.core.domain.entities.pagamento_entity import (
     PartialPagamentoEntity,
 )
@@ -32,11 +34,16 @@ class PagamentoEntityDataMapper:
         )
 
     @classmethod
-    def from_domain_to_db(cls, payment: PartialPagamentoEntity):
+    def from_domain_to_db(
+        cls,
+        payment: PartialPagamentoEntity,
+        purchase: Optional[PartialCompraEntity] = None,
+    ):
         return {
             "id": payment.id,
             "payment_method": payment.payment_method.id,
             "status": payment.status.value,
             "value": payment.payment_value.value,
             "currency": payment.payment_value.currency.id,
+            "purchase": purchase.id if purchase else None,
         }

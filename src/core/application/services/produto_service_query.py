@@ -1,6 +1,7 @@
 from typing import List, Optional
 from src.core.application.interfaces.produto_query import IProdutoQuery
 from src.core.domain.aggregates.produto_aggregate import ProdutoAggregate
+from src.core.domain.entities.categoria_entity import CategoriaEntity
 from src.core.helpers.options.produto_find_options import ProdutoFindOptions
 
 
@@ -18,3 +19,6 @@ class ProdutoServiceQuery(IProdutoQuery):
         if not options:
             return self.product_query.get_all()
         return self.product_query.find(options)
+
+    def list_categories(self) -> List[CategoriaEntity]:
+        return self.category_query.get_all()

@@ -10,10 +10,10 @@ from src.core.helpers.enums.pagamento_status import PagamentoStatus
 
 class PedidoServiceCommand(IPedidoCommand):
     def create_pedido(self, pedido: PartialCompraEntity) -> PedidoAggregate:
-        return self.purchase_repository.create_compra(pedido)
+        return self.purchase_repository.create(pedido)
 
     def concludes_pedido(self, pedido_id: int) -> PedidoAggregate:
-        pedido = self.purchase_query.get(pedido_id)
+        pedido = self.purchase_repository.get_by_purchase_id(pedido_id)
         if not pedido:
             raise ValueError("Pedido não encontrado.")
         if pedido.purchase.status == CompraStatus.CONCLUIDO:
@@ -29,27 +29,32 @@ class PedidoServiceCommand(IPedidoCommand):
         return self._execute_update_status(pedido, CompraStatus.CONCLUIDO)
 
     def cancel_pedido(self, pedido_id: int) -> PedidoAggregate:
-        pedido = self.purchase_query.get(pedido_id)
+        pedido = self.purchase_repository.get_by_purchase_id(pedido_id)
         if not pedido:
             raise ValueError("Pedido não encontrado.")
         return self._execute_update_status(pedido, CompraStatus.CANCELADO)
 
     def add_new_product(self, pedido_id: int, product_id: int):
-        pedido = self.purchase_query.get(pedido_id)
+        pedido = self.purchase_repository.get_by_purchase_id(pedido_id)
         if not pedido:
             raise ValueError("Pedido não encontrado")
-        produto = self.produto_query.get_only_entity(product_id)
+        produto = self.cache_service.get(
+            product_id
+        ) or self.produto_query.get_only_entity(product_id)
+        self.cache_service.set(product_id, produto)
         if not produto:
             raise ValueError("Produto não encontrado")
+        if pedido.purchase.status != CompraStatus.CRIANDO:
+            raise ValueError("Pedido não está mais aberto.")
         selected_product = PartialProdutoEscolhidoEntity(
             product=produto, added_components=[]
         )
         pedido.purchase.selected_products.append(selected_product)
         pedido.purchase.total.value = self._calculate_total_value(pedido.purchase)
-        return self.purchase_repository.update_compra(pedido.purchase)
+        return self.purchase_repository.update(pedido.purchase)
 
     def remove_select_product(self, pedido_id: int, selected_product_id: int):
-        pedido = self.purchase_query.get(pedido_id)
+        pedido = self.purchase_repository.get_by_purchase_id(pedido_id)
         current_length = len(pedido.purchase.selected_products)
         pedido.purchase.selected_products = [
             selected_product
@@ -59,20 +64,26 @@ class PedidoServiceCommand(IPedidoCommand):
         if current_length == len(pedido.purchase.selected_products):
             raise ValueError("Produto não está no pedido.")
         pedido.purchase.total.value = self._calculate_total_value(pedido.purchase)
-        return self.purchase_repository.update_compra(pedido.purchase)
+        return self.purchase_repository.update(pedido.purchase)
 
     def add_component_to_select_product(
         self, pedido_id: int, selected_product_id: int, component_id: int
     ):
-        pedido = self.purchase_query.get(pedido_id)
-        adding_product = self.produto_query.get_only_entity(selected_product_id)
+        pedido = self.purchase_repository.get_by_purchase_id(pedido_id)
+        adding_product = self.cache_service.get(
+            selected_product_id
+        ) or self.produto_query.get_only_entity(selected_product_id)
+        self.cache_service.set(selected_product_id, adding_product)
         if not any(
             component
             for component in adding_product.components
             if component.id == component_id
         ):
             raise ValueError("Produto não possui esse adicional.")
-        new_component = self.produto_query.get_only_entity(component_id)
+        new_component = self.cache_service.get(
+            component_id
+        ) or self.produto_query.get_only_entity(component_id)
+        self.cache_service.set(component_id, new_component)
         target_selected_product = next(
             (
                 selected_product
@@ -85,12 +96,12 @@ class PedidoServiceCommand(IPedidoCommand):
             raise ValueError("Selected product not found")
         target_selected_product.added_components.append(new_component)
         pedido.purchase.total.value = self._calculate_total_value(pedido.purchase)
-        return self.purchase_repository.update_compra(pedido.purchase)
+        return self.purchase_repository.update(pedido.purchase)
 
     def update_status(
         self, pedido_id: int, new_status: CompraStatus
     ) -> PedidoAggregate:
-        pedido = self.purchase_query.get(pedido_id)
+        pedido = self.purchase_repository.get_by_purchase_id(pedido_id)
         if not pedido:
             raise ValueError("Pedido não encontrado.")
         return self._execute_update_status(pedido, new_status)
@@ -103,7 +114,7 @@ class PedidoServiceCommand(IPedidoCommand):
                 f"Não é permitido mudar do status {pedido.purchase.status.name} para o status {new_status.name}"
             )
         pedido.purchase.status = new_status
-        return self.purchase_repository.update_compra(pedido.purchase)
+        return self.purchase_repository.update(pedido.purchase)
 
     def _calculate_total_value(self, compra: CompraEntity):
         total = 0

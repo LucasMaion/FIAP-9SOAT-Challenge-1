@@ -7,6 +7,7 @@ class MeioDePagamentoEntityDataMapper:
     def from_db_to_domain(cls, payment_method: PaymentMethod):
         return MeioDePagamentoEntity(
             id=payment_method.id,
+            sys_name=payment_method.sys_name,
             created_at=payment_method.created_at,
             updated_at=payment_method.updated_at,
             deleted_at=payment_method.deleted_at,

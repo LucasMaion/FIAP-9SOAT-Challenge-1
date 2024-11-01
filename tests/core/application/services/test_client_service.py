@@ -36,7 +36,7 @@ class TestClientService:
             orders=[],
             person=PersonaValueObject(
                 name="Test",
-                document="123.456.789-00",
+                document="12345678900",
                 email="email.test@teste.test",
                 address=AddressValueObject(
                     zip_code="12345678",
@@ -48,7 +48,7 @@ class TestClientService:
                     additional_information="Test",
                 ),
                 birth_date=datetime(2021, 1, 1),
-                phone="+5511999999999",
+                phone="11999999999",
             ),
             created_at=datetime(2021, 1, 1),
             updated_at=datetime(2021, 1, 1),

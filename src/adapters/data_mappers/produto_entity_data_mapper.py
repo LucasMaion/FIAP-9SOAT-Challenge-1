@@ -38,7 +38,7 @@ class ProdutoEntityDataMapper:
             is_active=produto.is_active,
             components=(
                 [cls.from_db_to_domain(comp.component) for comp in produto.components]
-                if hasattr(produto, "components")
+                if hasattr(produto, "components") and produto.components is not None
                 else None
             ),
         )
@@ -53,8 +53,12 @@ class ProdutoEntityDataMapper:
             "is_active": produto.is_active,
             "category": produto.category.id if produto.category else None,
             "currency": produto.price.currency.id if produto.price else None,
-            "components": [
-                {"product": produto.id, "component": comp.id}
-                for comp in produto.components
-            ],
+            "components": (
+                [
+                    {"product": produto.id, "component": comp.id}
+                    for comp in produto.components
+                ]
+                if produto.components
+                else None
+            ),
         }

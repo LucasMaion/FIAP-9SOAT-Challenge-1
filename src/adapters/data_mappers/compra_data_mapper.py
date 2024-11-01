@@ -73,7 +73,7 @@ class CompraEntityDataMapper:
 
         return {
             "id": compra.id,
-            "status": compra.status,
+            "status": compra.status.value,
             "total_value": compra.total.value,
             "currency": compra.total.currency.id,
             "client": compra.client.id,

@@ -20,7 +20,11 @@ class OrmCategoriaQuery(CategoriaQuery):
         return None
 
     def get_all(self) -> list[CategoriaEntity]:
-        raise NotImplementedError()
+        product: Category = Category.select()
+        parsed_result = [
+            CategoriaEntityDataMapper.from_db_to_domain(res) for res in product
+        ]
+        return parsed_result
 
     def find(self, query_options: PartialCategoriaEntity) -> list[CategoriaEntity]:
         raise NotImplementedError()

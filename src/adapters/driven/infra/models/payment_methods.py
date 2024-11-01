@@ -8,5 +8,6 @@ class PaymentMethod(BaseModel):
         db_table = "payment_method"
 
     name = CharField()
+    sys_name = CharField()
     description = CharField(null=True)
     is_active = BooleanField(default=True)

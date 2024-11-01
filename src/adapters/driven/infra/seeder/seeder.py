@@ -108,6 +108,7 @@ def _seed_currency() -> int:
 def _seed_payment_methods() -> int:
     payment_method = PaymentMethod(
         name="Mercado Pago QR Code",
+        sys_name="DefaultPaymentProvider",
         description="Pagamento para processar pelo mercado pago, cliente escaneia o QR Code para realizar transação.",
         is_active=True,
     )
@@ -243,7 +244,7 @@ def _seed_product_and_product_components(
         ProductComponent(product=cocorico.id, component=bacon.id).save(),
     ]
     chester_b_comps = [
-        ProductComponent(product=chester.id, component=chester.id).save(),
+        ProductComponent(product=chester_b.id, component=chester.id).save(),
     ]
     return [
         big.id,

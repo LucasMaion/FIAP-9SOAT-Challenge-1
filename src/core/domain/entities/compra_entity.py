@@ -16,5 +16,5 @@ class CompraEntity(Entity):
 class PartialCompraEntity(PartialEntity, CompraEntity):
     client: Optional[ClienteEntity] = None
     status: Optional[CompraStatus] = None
-    selected_product: Optional[List[ProdutoEscolhidoEntity]] = None
+    selected_products: Optional[List[ProdutoEscolhidoEntity]] = None
     total: Optional[PrecoValueObject] = None
