@@ -25,12 +25,12 @@ class PagamentoService(IPagamentoService):
         if payment_method.is_active is False:
             raise ValueError("Meio de pagamento inativo.")
         if self.payment_provider.process_payment(pedido.purchase):
-            payment = PartialPagamentoEntity(
+            payment_entity = PartialPagamentoEntity(
                 payment_method=payment_method,
                 status=PagamentoStatus.PAGO,
                 payment_value=pedido.purchase.total,
             )
-            payment = self.payment_repository.create(payment)
+            payment = self.payment_repository.create(payment_entity)
             pedido.purchase.status = CompraStatus.PAGO
             payment.purchase = self.pedido_repository.update(
                 pedido.purchase, payment.payment

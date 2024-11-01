@@ -4,10 +4,11 @@ from unittest.mock import MagicMock
 
 import pytest
 from src.core.application.services.pagamento_service import PagamentoService
+from src.core.domain.aggregates.pagamento_aggregate import PagamentoAggregate
 from src.core.domain.aggregates.pedido_aggregate import PedidoAggregate
 from src.core.domain.entities.categoria_entity import CategoriaEntity
 from src.core.domain.entities.cliente_entity import ClienteEntity
-from src.core.domain.entities.compra_entity import CompraEntity
+from src.core.domain.entities.compra_entity import CompraEntity, PartialCompraEntity
 from src.core.domain.entities.currency_entity import CurrencyEntity
 from src.core.domain.entities.meio_de_pagamento_entity import MeioDePagamentoEntity
 from src.core.domain.entities.pagamento_entity import (
@@ -34,7 +35,11 @@ class TestPagamentoService:
         return MagicMock()
 
     @pytest.fixture
-    def purchase_repository(self):
+    def pagamento_repository(self):
+        return MagicMock()
+
+    @pytest.fixture
+    def pedido_repository(self):
         return MagicMock()
 
     @pytest.fixture
@@ -44,16 +49,18 @@ class TestPagamentoService:
     @pytest.fixture
     def pagamento_service(
         self,
-        purchase_repository,
+        pagamento_repository,
         purchase_query,
         payment_provider,
         meio_de_pagamento_query,
+        pedido_repository,
     ):
         return PagamentoService(
-            pagamento_repository=purchase_repository,
+            pagamento_repository=pagamento_repository,
             purchase_query=purchase_query,
             payment_provider=payment_provider,
             meio_de_pagamento_query=meio_de_pagamento_query,
+            pedido_repository=pedido_repository,
         )
 
     @pytest.fixture
@@ -210,13 +217,21 @@ class TestPagamentoService:
         pagamento_service.meio_de_pagamento_query.get = MagicMock(
             return_value=payment_method_entity
         )
-        return_payment = PartialPagamentoEntity(
-            payment_method=payment_method_entity,
-            status=PagamentoStatus.PAGO,
-            purchase=pedido.purchase,
-            payment_value=pedido.purchase.total,
+        return_payment = PagamentoAggregate(
+            payment=PartialPagamentoEntity(
+                payment_method=payment_method_entity,
+                status=PagamentoStatus.PAGO,
+                purchase=pedido.purchase,
+                payment_value=pedido.purchase.total,
+            ),
+            purchase=PartialCompraEntity(
+                status=CompraStatus.PAGO,
+            ),
         )
         pagamento_service.payment_repository.create = MagicMock(
+            return_value=return_payment
+        )
+        pagamento_service.pedido_repository.update = MagicMock(
             return_value=return_payment
         )
         result = pagamento_service.process_purchase_payment(1, 1)
