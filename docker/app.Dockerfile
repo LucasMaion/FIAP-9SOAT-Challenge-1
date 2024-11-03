@@ -14,13 +14,13 @@ ENV POETRY_NO_INTERACTION=1 \
 RUN python3 -m pip install poetry
 
 WORKDIR /app
-COPY builder.py app.py pyproject.toml poetry.lock ./
+COPY builder.py app.py pyproject.toml ./
 RUN poetry lock --no-update && poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DI
 
 FROM builder AS dev
 
 WORKDIR /app
-COPY builder.py app.py pyproject.toml poetry.lock ./
+COPY builder.py app.py pyproject.toml ./
 COPY ./migration ./migration
 COPY ./src ./src
 COPY ./tests ./tests
@@ -32,7 +32,7 @@ CMD ["poetry", "run", "uvicorn", "app:app", "--reload", "--host", "0.0.0.0", "--
 FROM builder AS prd
 
 WORKDIR /app
-COPY builder.py app.py pyproject.toml poetry.lock ./
+COPY builder.py app.py pyproject.toml ./
 COPY ./migration ./migration
 COPY ./src ./src
 RUN poetry run python3 builder.py -b
