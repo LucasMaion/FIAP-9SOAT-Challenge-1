@@ -1,0 +1,19 @@
+ {
+    "cSpell.language": "en,pt-BR",
+    "[python]": {
+        "editor.formatOnType": true,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "editor.autoIndent": "full",
+    "editor.formatOnSave": true,
+    "cSpell.words": [
+        "Pagamentoentity",
+        "preco"
+    ],
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+}
