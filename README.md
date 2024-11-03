@@ -14,7 +14,7 @@ O objetivo do projeto de demonstrar as implementações técnicas dos conceitos 
 Uma solução de gerenciamento de pedidos de restaurante, com uma API para gerenciamento de produtos, clientes, pedidos e fila de preparo para cozinha (backoffice)
 
 ## Utilizando Imagem
-Garanta que tenha o docker e docker-compose instalados em seu ambiente e execute o comando docker-compose -f docker-compose.dev.yml up -d e acesse [localhost:8000](http://localhost:8000) para abrir o projeto.
+Garanta que tenha o docker e docker-compose instalados em seu ambiente e execute o comando `docker-compose -f docker-compose.dev.yml up -d` e acesse [localhost:8000](http://localhost:8000) para abrir o projeto.
 
 ## Utilizando ambiente local
 ### Instalando dependências
