@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:17
+    tmpfs:
+      - /var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: "Postgres2022!"
+    ports:
+      - "5432:5432"
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app.Dockerfile
+      target: dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      DB_NAME: "postgres"
+      DB_USER: "postgres"
+      DB_PASSWORD: "Postgres2022!"
+      DB_HOST: "postgres"
+      DB_PORT: 5432
+      DB_SEED: 1
+      DB_BUILD: 1
+    restart: always

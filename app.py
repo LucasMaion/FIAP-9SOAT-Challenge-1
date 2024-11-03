@@ -8,8 +8,10 @@ Managing the queue of purchases and the status of the purchases.
 It was developed as a challenge project for the FIAP Software Architecture Post Graduation 9th class.
 """
 
+import os
 from fastapi import FastAPI
 
+from builder import build_db, seed_db
 from src.adapters.driven.infra.database.db import start_db
 from src.adapters.driver.API import (
     cliente_router,
@@ -38,6 +40,10 @@ app = FastAPI(
 )
 
 start_db()
+if int(os.getenv("DB_BUILD", 0)):
+    build_db()
+if int(os.getenv("DB_SEED", 0)):
+    seed_db()
 
 
 @app.get("/")

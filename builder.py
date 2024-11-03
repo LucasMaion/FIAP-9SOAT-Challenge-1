@@ -1,10 +1,7 @@
 import argparse
-from dotenv import load_dotenv
 
-from src.adapters.driven.infra.seeder.seeder import seed_data
-
-load_dotenv()
-from src.adapters.driven.infra.migration.raw_creation import create_tables
+from migration.seeder.seeder import seed_data
+from migration.builder.raw_creation import create_tables
 
 
 def build_db():

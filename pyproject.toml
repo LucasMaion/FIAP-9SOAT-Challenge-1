@@ -5,21 +5,21 @@ description = ""
 authors = ["Lucas Maion <lucasmgois@outlook.com>"]
 license = "MIT"
 readme = "README.md"
-package-mode = false
+# package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
+psycopg2-binary = "^2.9.10"
+psycopg2 = "^2.9.10"
 fastapi = {extras = ["standard"], version = "^0.115.2"}
 peewee = "^3.17.6"
 pydantic = "^2.9.2"
 loguru = "^0.7.2"
-psycopg2 = "^2.9.10"
 schedule = "^1.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
-load-dotenv = "^0.1.0"
 faker = "^30.8.1"
 
 [build-system]
